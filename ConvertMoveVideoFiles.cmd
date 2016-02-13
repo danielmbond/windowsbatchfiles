@@ -5,7 +5,6 @@ rem Change to where your video files go.
 set downloads=%USERPROFILE%\Downloads
 rem Default iTunes Automatically Add to iTunes folder.
 set itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\AUTOMA~1\
-pause
 cd %downloads%
 echo %downloads%
 rem Delete crap files.
