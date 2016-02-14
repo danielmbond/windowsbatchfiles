@@ -8,7 +8,7 @@ set itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\AUTOMA~1\
 cd %downloads%
 echo %downloads%
 rem Delete crap files.
-for /r "%downloads%" %%A in (*.srr *.par2 *.nzb *.jpg *.srs *.sfv *sample* *.nfo) do del "%%A"
+for /r "%downloads%" %%A in (*.idx *.sub *.srr *.par2 *.nzb *.jpg *.srs *.sfv *sample* *.nfo) do del "%%A"
 echo $root = '%downloads%' > RenameVids.ps1
 echo Set-Location $root >> RenameVids.ps1
 echo if((Get-Location).Path -eq $root) >> RenameVids.ps1
