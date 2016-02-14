@@ -21,7 +21,7 @@ echo         $basename = $basename.Replace("."," ") >> RenameVids.ps1
 echo         $basename = $basename.Replace("-","") >> RenameVids.ps1
 echo         foreach($word in $removeFromFilename) >> RenameVids.ps1
 echo         { >> RenameVids.ps1
-echo             $basename = $basename.Replace($word,"") >> RenameVids.ps1
+echo             $basename = $basename -replace $word >> RenameVids.ps1
 echo             $basename = $basename.Replace("  "," ") >> RenameVids.ps1
 echo         } >> RenameVids.ps1
 echo         $basename = $basename.Trim() >> RenameVids.ps1
