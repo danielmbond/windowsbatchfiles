@@ -30,7 +30,11 @@ echo         $_.MoveTo($fullname) >> RenameVids.ps1
 echo         $fullname >> RenameVids.ps1
 echo     } >> RenameVids.ps1
 echo } >> RenameVids.ps1
-rem Remove a bunch of crap from the filename: "HDTV", "x264", "FLEET", "TASTETV", "LOL", "KILLERS", "2HD", "UAV", "OSiTV", "EVOLVE", "REPACK"
+echo while(Get-Process ffmpeg) >> RenameVids.ps1
+echo { >> RenameVids.ps1
+echo 	Start-Sleep 300 >> RenameVids.ps1
+echo } >> RenameVids.ps1
+rem Remove a bunch of crap from the filename
 PowerShell.exe -ExecutionPolicy Bypass -File %downloads%\RenameVids.ps1
 rem If it's a mp4 move it to the itunes automatic download folder otherwise convert it to mp4 and move it. 
 for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
