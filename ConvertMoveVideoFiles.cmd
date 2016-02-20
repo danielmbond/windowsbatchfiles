@@ -8,13 +8,14 @@ set itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\AUTOMA~1\
 cd %downloads%
 echo %downloads%
 rem Delete crap files.
-for /r "%downloads%" %%A in (*.idx *.sub *.srr *.par2 *.nzb *.jpg *.srs *.sfv *sample* *.nfo) do del "%%A"
+for /r "%downloads%" %%A in (*.srt *.txt *.idx *.sub *.srr *.par2 *.nzb *.jpg *.srs *.sfv *sample* *.nfo) do del "%%A"
 echo $root = '%downloads%' > RenameVids.ps1
 echo Set-Location $root >> RenameVids.ps1
 echo if((Get-Location).Path -eq $root) >> RenameVids.ps1
 echo { >> RenameVids.ps1
-echo     $removeFromFilename = "HDTV", "x264", "FLEET", "TASTETV", "LOL", "KILLERS", ` >> RenameVids.ps1
-echo     "2HD", "UAV", "OSiTV", "EVOLVE", "REPACK", "ALTEREGO", "AMIABLE", "EVO", "LEGION" >> RenameVids.ps1
+echo     $removeFromFilename = "bdrip", "ositv", "BDRip", "DEMAND", "HDTV", "x264", "FLEET", "TASTETV", "LOL", "KILLERS", ` >> RenameVids.ps1
+echo     "2HD", "UAV", "OSiTV", "EVOLVE", "REPACK", "ALTEREGO", "AMIABLE", "EVO", "LEGION", "1080", "WEBDL", "DD5", "ettv", ` >> RenameVids.ps1
+echo     "[", "]" >> RenameVids.ps1
 echo     Get-ChildItem -Recurse -Include *.avi, *.mkv, *.mp4, *.txt ^| foreach($_){ >> RenameVids.ps1
 echo         $basename = $_.BaseName >> RenameVids.ps1
 echo         $basename = $basename.Replace("."," ") >> RenameVids.ps1
@@ -30,7 +31,7 @@ echo         $_.MoveTo($fullname) >> RenameVids.ps1
 echo         $fullname >> RenameVids.ps1
 echo     } >> RenameVids.ps1
 echo } >> RenameVids.ps1
-echo while(Get-Process ffmpeg) >> RenameVids.ps1
+echo while(Get-Process ffmpeg -ErrorAction SilentlyContinue) >> RenameVids.ps1
 echo { >> RenameVids.ps1
 echo 	Start-Sleep 300 >> RenameVids.ps1
 echo } >> RenameVids.ps1
