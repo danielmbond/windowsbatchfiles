@@ -15,7 +15,7 @@ echo if((Get-Location).Path -eq $root) >> RenameVids.ps1
 echo { >> RenameVids.ps1
 echo     $removeFromFilename = "bdrip", "ositv", "BDRip", "DEMAND", "HDTV", "x264", "FLEET", "TASTETV", "LOL", "KILLERS", ` >> RenameVids.ps1
 echo     "2HD", "UAV", "OSiTV", "EVOLVE", "REPACK", "ALTEREGO", "AMIABLE", "EVO", "LEGION", "1080", "WEBDL", "DD5", "ettv", ` >> RenameVids.ps1
-echo     "[", "]" >> RenameVids.ps1
+echo     "[", "]", "540" >> RenameVids.ps1
 echo     Get-ChildItem -Recurse -Include *.avi, *.mkv, *.mp4, *.txt ^| foreach($_){ >> RenameVids.ps1
 echo         $basename = $_.BaseName >> RenameVids.ps1
 echo         $basename = $basename.Replace("."," ") >> RenameVids.ps1
@@ -31,9 +31,11 @@ echo         $_.MoveTo($fullname) >> RenameVids.ps1
 echo         $fullname >> RenameVids.ps1
 echo     } >> RenameVids.ps1
 echo } >> RenameVids.ps1
-echo while(Get-Process ffmpeg -ErrorAction SilentlyContinue) >> RenameVids.ps1
+echo $ffmpeg = Get-Process ffmpeg -ErrorAction SilentlyContinue
+echo while($ffmpeg) >> RenameVids.ps1
 echo { >> RenameVids.ps1
 echo 	Start-Sleep 300 >> RenameVids.ps1
+echo $ffmpeg = Get-Process ffmpeg -ErrorAction SilentlyContinue
 echo } >> RenameVids.ps1
 rem Remove a bunch of crap from the filename
 PowerShell.exe -ExecutionPolicy Bypass -File %downloads%\RenameVids.ps1
