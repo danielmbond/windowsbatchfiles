@@ -19,6 +19,7 @@ echo     "[", "]", "540" >> RenameVids.ps1
 echo     Get-ChildItem -Recurse -Include *.avi, *.mkv, *.mp4, *.txt ^| foreach($_){ >> RenameVids.ps1
 echo         $basename = $_.BaseName >> RenameVids.ps1
 echo         $basename = $basename.Replace("."," ") >> RenameVids.ps1
+echo         $basename = $basename.Replace("_"," ") >> RenameVids.ps1
 echo         $basename = $basename.Replace("-","") >> RenameVids.ps1
 echo         foreach($word in $removeFromFilename) >> RenameVids.ps1
 echo         { >> RenameVids.ps1
