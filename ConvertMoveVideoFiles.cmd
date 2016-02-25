@@ -15,9 +15,11 @@ echo if((Get-Location).Path -eq $root) >> RenameVids.ps1
 echo { >> RenameVids.ps1
 echo     $removeFromFilename = "bdrip", "ositv", "BDRip", "DEMAND", "HDTV", "x264", "FLEET", "TASTETV", "LOL", "KILLERS", ` >> RenameVids.ps1
 echo     "2HD", "UAV", "OSiTV", "EVOLVE", "REPACK", "ALTEREGO", "AMIABLE", "EVO", "LEGION", "1080", "WEBDL", "DD5", "ettv", ` >> RenameVids.ps1
-echo     "[", "]", "540" >> RenameVids.ps1
+echo     "540" >> RenameVids.ps1
 echo     Get-ChildItem -Recurse -Include *.avi, *.mkv, *.mp4, *.txt ^| foreach($_){ >> RenameVids.ps1
 echo         $basename = $_.BaseName >> RenameVids.ps1
+echo         $basename = $basename.Replace("[","") >> RenameVids.ps1
+echo         $basename = $basename.Replace("]"," ") >> RenameVids.ps1
 echo         $basename = $basename.Replace("."," ") >> RenameVids.ps1
 echo         $basename = $basename.Replace("_"," ") >> RenameVids.ps1
 echo         $basename = $basename.Replace("-","") >> RenameVids.ps1
