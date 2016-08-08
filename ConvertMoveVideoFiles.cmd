@@ -44,9 +44,9 @@ rem Remove a bunch of crap from the filename
 PowerShell.exe -ExecutionPolicy Bypass -File %downloads%\RenameVids.ps1
 rem If it's a mp4 move it to the itunes automatic download folder otherwise convert it to mp4 and move it. 
 for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
-for /r "%downloads%" %%A IN (*.mkv) DO ffmpeg.exe -i "%%A" -strict experimental -map 0:0? -map 0:1? -map 0:2? -map 0:3? -c:v copy -c:a aac -b:a 384k -c:s copy "%%A.mp4"
+for /r "%downloads%" %%A IN (*.mkv) DO ffmpeg.exe -i "%%A" -c:v libx264 "%%A.mp4"
 for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
-for /r "%downloads%" %%A IN (*.avi) DO ffmpeg.exe -i "%%A" -strict experimental -map 0:0? -map 0:1? -map 0:2? -map 0:3? -c:v copy -c:a aac -b:a 384k -c:s copy "%%A.mp4"
+for /r "%downloads%" %%A IN (*.avi) DO ffmpeg.exe -i "%%A" -c:v libx264 "%%A.mp4"
 for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
 rem Remove empty directories.
 for /r "%downloads%" %%A IN (.) DO rd "%%A"
