@@ -1,54 +1,89 @@
-@echo off
-rem Batch file to convert avi or mkv files to mp4 then move them to your iTunes import folder.
-rem Need to download ffmpeg from http://ffmpeg.org and put it in your path or the download directory.
-rem Change to where your video files go.
-set downloads=%USERPROFILE%\Downloads
-rem Default iTunes Automatically Add to iTunes folder.
-set itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\AUTOMA~1\
+@ECHO OFF
+SET FFMPEG="C:\ffmpeg\ffmpeg.exe"
+SET itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\HOMEVI~1
+SET downloads=%USERPROFILE%\Desktop\Downloads
+SET SCANNER="C:\Program Files (x86)\Plex\Plex Media Server\Plex Media Scanner.exe"
+SET SABNZBD="C:\PROGRA~2\SABnzbd\SABnzbd.exe"
+SET APIKEY=YOUR_API_KEY_GOES_HERE
+
+rem echo stopping sabnzbd
+rem curl "https://127.0.0.1:9090/sabnzbd/api?mode=shutdown&apikey=%APIKEY%"
+
+REM Kill ffmpeg if it's not doing anything.
+set "process_name=ffmpeg.exe"
+::remove .exe suffix if there is
+set pn=%process_name:.exe=%
+
+setlocal enableDelayedExpansion
+
+set c=0
+:: getting three snapshots of CPU usage of the given process
+for /f skip^=2^ tokens^=3^ delims^=^" %%p in ('typeperf "\Process(%pn%)\%% Processor Time"  -sc 3') do (
+    set /a counter=counter+1
+    for /f "tokens=1,2 delims=." %%a in ("%%p") do set  "process_snapshot_!counter!=%%a%%b"
+
+)
+
+:: remove rem to see the cpu usage from the three snapshots
+set process_snapshot_
+
+:: if all three snapshots are less than 0000010 process will be killed
+if 1%process_snapshot_1% LSS 10000010 if 1%process_snapshot_2% LSS 10000010 if 1%process_snapshot_3% LSS 10000010 (
+     tskill %pn%
+)
+
+ECHO Looking in "%itunes%" to convert .avi and .mkv files...
+for /r "%itunes%" %%A IN (*.mkv) DO %FFMPEG% -i "%%A" -c:v libx264 "%%~pA\%%~nA.mp4"
+for /r "%itunes%" %%A IN (*.avi) DO %FFMPEG% -i "%%A" -c:v libx264 "%%~pA\%%~nA.mp4"
+ECHO delete everything in %itunes% that's not an mp4
+for /R %itunes% %%G IN (*) do if not %%~xG==.mp4 del "%%G"
+ECHO delete mkvs and avis in %downloads%
 cd %downloads%
-echo %downloads%
-rem Delete crap files.
-for /r "%downloads%" %%A in (*.srt *.txt *.idx *.sub *.srr *.par2 *.nzb *.jpg *.srs *.sfv *sample* *.nfo) do del "%%A"
-echo $root = '%downloads%' > RenameVids.ps1
-echo Set-Location $root >> RenameVids.ps1
-echo if((Get-Location).Path -eq $root) >> RenameVids.ps1
+for /r "%downloads%" %%A in (*.mkv *.avi) do del "%%A"
+echo $root = '%downloads' >> RenameVids.ps1
+echo $itunes = '%itunes%' >> RenameVids.ps1
+echo Set-Location $root  >> RenameVids.ps1
+echo if((Get-Location).Path -eq $root)  >> RenameVids.ps1
 echo { >> RenameVids.ps1
-echo     $removeFromFilename = "bdrip", "ositv", "BDRip", "DEMAND", "HDTV", "x264", "FLEET", "TASTETV", "LOL", "KILLERS", ` >> RenameVids.ps1
-echo     "2HD", "UAV", "OSiTV", "EVOLVE", "REPACK", "ALTEREGO", "AMIABLE", "EVO", "LEGION", "1080", "WEBDL", "DD5", "ettv", ` >> RenameVids.ps1
-echo     "540" >> RenameVids.ps1
-echo     Get-ChildItem -Recurse -Include *.avi, *.mkv, *.mp4, *.txt ^| foreach($_){ >> RenameVids.ps1
-echo         $basename = $_.BaseName >> RenameVids.ps1
-echo         $basename = $basename.Replace("[","") >> RenameVids.ps1
-echo         $basename = $basename.Replace("]"," ") >> RenameVids.ps1
-echo         $basename = $basename.Replace("."," ") >> RenameVids.ps1
-echo         $basename = $basename.Replace("_"," ") >> RenameVids.ps1
-echo         $basename = $basename.Replace("-","") >> RenameVids.ps1
-echo         foreach($word in $removeFromFilename) >> RenameVids.ps1
+echo     $mp4s = Get-ChildItem -Recurse -Include *.mp4 >> RenameVids.ps1
+echo     >> RenameVids.ps1
+echo     foreach($mp4 in $mp4s) >> RenameVids.ps1
+echo     {  >> RenameVids.ps1
+echo      >> RenameVids.ps1
+echo         $basename = $mp4.BaseName  >> RenameVids.ps1
+echo         $basename >> RenameVids.ps1
+echo         $basename = $basename.Replace("."," ")  >> RenameVids.ps1
+echo         $basename = $basename.Replace("_"," ")  >> RenameVids.ps1
+echo         $basename = $basename -replace '[\[\]()\.]' >> RenameVids.ps1
+echo         $re1='((?:.*[sS][0-9][0-9][eE][0-9][0-9]*))' >> RenameVids.ps1 #look for the S00E00 patern and delete everything after it
+echo         $basename -match $re1 >> RenameVids.ps1
+echo         if($matches[0]) >> RenameVids.ps1
 echo         { >> RenameVids.ps1
-echo             $basename = $basename -replace $word >> RenameVids.ps1
-echo             $basename = $basename.Replace("  "," ") >> RenameVids.ps1
+echo             $basename = $matches[0] >> RenameVids.ps1
+echo         } >> RenameVids.ps1
+echo         while($basename.contains("  ")) >> RenameVids.ps1
+echo         { >> RenameVids.ps1
+echo             $basename.replace("  "," ") >> RenameVids.ps1
 echo         } >> RenameVids.ps1
 echo         $basename = $basename.Trim() >> RenameVids.ps1
-echo         $fullname = $root + "\" + $basename + $_.Extension >> RenameVids.ps1
-echo         $_.MoveTo($fullname) >> RenameVids.ps1
-echo         $fullname >> RenameVids.ps1
-echo     } >> RenameVids.ps1
+echo         $showName=($mp4.DirectoryName).Split("\") >> RenameVids.ps1
+echo         $showname = $showName[$showName.Count-1] >> RenameVids.ps1
+echo         $itunesShowPath = $itunes + $showName + "\" >> RenameVids.ps1
+echo         if(!(Test-Path $itunesShowPath)) >> RenameVids.ps1
+echo         { >> RenameVids.ps1
+echo             New-Item $itunesShowPath -type directory >> RenameVids.ps1
+echo         } >> RenameVids.ps1
+echo         $fullname = $itunes + $showName + "\" + $basename + $mp4.Extension  >> RenameVids.ps1
+echo         $mp4.MoveTo($fullname)  >> RenameVids.ps1
+echo         $fullname  >> RenameVids.ps1
+echo     }  >> RenameVids.ps1
 echo } >> RenameVids.ps1
-echo $ffmpeg = Get-Process ffmpeg -ErrorAction SilentlyContinue
-echo while($ffmpeg) >> RenameVids.ps1
-echo { >> RenameVids.ps1
-echo 	Start-Sleep 300 >> RenameVids.ps1
-echo $ffmpeg = Get-Process ffmpeg -ErrorAction SilentlyContinue
-echo } >> RenameVids.ps1
-rem Remove a bunch of crap from the filename
 PowerShell.exe -ExecutionPolicy Bypass -File %downloads%\RenameVids.ps1
-rem If it's a mp4 move it to the itunes automatic download folder otherwise convert it to mp4 and move it. 
-for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
-for /r "%downloads%" %%A IN (*.mkv) DO ffmpeg.exe -i "%%A" -c:v libx264 "%%A.mp4"
-for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
-for /r "%downloads%" %%A IN (*.avi) DO ffmpeg.exe -i "%%A" -c:v libx264 "%%A.mp4"
-for /r "%downloads%" %%A IN (*.mp4) DO move "%%A" "%itunes%"
 rem Remove empty directories.
 for /r "%downloads%" %%A IN (.) DO rd "%%A"
-for /r "%downloads%" %%A IN (.) DO rd "%%A"
-for /r "%downloads%" %%A in (*.mkv *.avi) do del "%%A"
+for /r "%itunes%" %%A IN (.) DO rd "%%A"
+rem echo starting sabnzbd
+rem start %SABNZBD%
+ECHO Refreshing PLEX
+%SCANNER% --scan --refresh --force
+ECHO Post processing complete.
