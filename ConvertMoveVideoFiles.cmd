@@ -40,7 +40,7 @@ for /R %itunes% %%G IN (*) do if not %%~xG==.mp4 del "%%G"
 ECHO delete mkvs and avis in %downloads%
 cd %downloads%
 for /r "%downloads%" %%A in (*.mkv *.avi) do del "%%A"
-echo $root = '%downloads' >> RenameVids.ps1
+echo $root = '%downloads' > RenameVids.ps1
 echo $itunes = '%itunes%' >> RenameVids.ps1
 echo Set-Location $root  >> RenameVids.ps1
 echo if((Get-Location).Path -eq $root)  >> RenameVids.ps1
