@@ -1,6 +1,6 @@
 @ECHO OFF
 SET FFMPEG="C:\ffmpeg\ffmpeg.exe"
-SET itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\HOMEVI~1
+SET itunes=%USERPROFILE%\Music\iTunes\ITUNES~1\HOMEVI~1\TV\
 SET downloads=%USERPROFILE%\Desktop\Downloads
 SET SCANNER="C:\Program Files (x86)\Plex\Plex Media Server\Plex Media Scanner.exe"
 SET SABNZBD="C:\PROGRA~2\SABnzbd\SABnzbd.exe"
