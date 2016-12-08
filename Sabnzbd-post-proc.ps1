@@ -1,10 +1,10 @@
+$networkComputer = "10.0.0.2" #ip address of networked computer to move files to
 $ffmpeg = 'c:\ffmpeg\ffmpeg.exe' #download from http://ffmpeg.zeranoe.com/builds/
 $plexScan = 'C:\PROGRA~2\Plex\PLEXME~1\PLEXME~2.EXE'
 $downloadfolder = $env:USERPROFILE + '\Desktop\Downloads\'
 $tvDest = "\\$networkComputer\Backup\TV\" #where to move tv shows to
 $movieDest = "\\$networkComputer\Backup\Movies\" #where to move movies to
 $dest = $tvDest
-$networkComputer = "10.0.0.2" #ip address of networked computer to move files to
 
 if($networkComputer -and !(Test-Connection -ComputerName $networkComputer -BufferSize 16 -Count 1 -Quiet))
 {
